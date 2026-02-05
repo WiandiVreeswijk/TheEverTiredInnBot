@@ -1,4 +1,7 @@
 require('dotenv').config();
+
+const fs = require("fs");
+const path = require("path");
 const {
     Client,
     GatewayIntentBits,
@@ -10,7 +13,26 @@ const {
 
 const client = new Client({
     intents: [GatewayIntentBits.Guilds]
-});
+})
+client.commands = new Map();
+
+const commandsPath = path.join(__dirname, "commands");
+if (fs.existsSync(commandsPath)) {
+    const commandFolders = fs.readdirSync(commandsPath);
+
+    for (const folder of commandFolders) {
+        const folderPath = path.join(commandsPath, folder);
+        const commandFiles = fs
+            .readdirSync(folderPath)
+            .filter(file => file.endsWith(".js"));
+
+        for (const file of commandFiles) {
+            const filePath = path.join(folderPath, file);
+            const command = require(filePath);
+            client.commands.set(command.data.name, command);
+        }
+    }
+};
 
 const suggestions = [];
 let votingOpen = true;
@@ -33,7 +55,19 @@ client.once('clientReady', () => {
 client.on('interactionCreate', async interaction => {
     if (interaction.isChatInputCommand()) {
         const { commandName } = interaction;
-
+        const command = client.commands.get(commandName);
+        if (command) {
+            try {
+                await command.execute(interaction);
+            } catch (error) {
+                console.error(error);
+                await interaction.reply({
+                    content: "❌ Something went wrong running this command.",
+                    ephemeral: true
+                });
+            }
+            return;
+        }
         if (commandName === 'suggest') {
             if (!votingOpen) {
                 return interaction.reply({

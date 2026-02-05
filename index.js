@@ -110,6 +110,17 @@ client.on('interactionCreate', async interaction => {
 
         const row = new ActionRowBuilder().addComponents(updatedButton);
 
+        if (interaction.customId === 'steamfriend_reply') {
+            return interaction.reply({
+                content:
+                    '👋 Want to add them?\n\n' +
+                    'Share **your** Steam Friend Code using:\n' +
+                    '`/steamfriend code:YOUR_CODE`\n\n' +
+                    'Steam → Friends → Add a Friend → Friend Code',
+                ephemeral: true
+            });
+        }
+
         await interaction.update({ components: [row] });
     }
 });

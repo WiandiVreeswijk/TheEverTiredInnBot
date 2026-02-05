@@ -1,4 +1,10 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const {
+    SlashCommandBuilder,
+    EmbedBuilder,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle
+} = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -18,13 +24,23 @@ module.exports = {
             .setTitle('🎮 Steam Friend Code')
             .setColor(0x1b2838)
             .setDescription(
-                `**${interaction.user.username}** wants to be friends on Steam!\n\n` +
+                `**${interaction.user.username}** is looking for Steam friends!\n\n` +
                 `🧾 **Friend Code:** \`${friendCode}\`\n\n` +
                 '**How to add:**\n' +
                 'Steam → Friends → Add a Friend → Enter a Friend Code'
             )
-            .setFooter({ text: 'Happy gaming together 🚀' });
+            .setFooter({ text: 'Click the button below to respond 👇' });
 
-        await interaction.reply({ embeds: [embed] });
+        const row = new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+                .setCustomId('steamfriend_reply')
+                .setLabel('🤝 Add me on Steam')
+                .setStyle(ButtonStyle.Primary)
+        );
+
+        await interaction.reply({
+            embeds: [embed],
+            components: [row]
+        });
     }
 };

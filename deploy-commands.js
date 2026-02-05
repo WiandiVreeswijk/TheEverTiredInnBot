@@ -1,31 +1,29 @@
 require('dotenv').config();
-const { REST, Routes, SlashCommandBuilder, PermissionsBitField } = require('discord.js');
+const fs = require('fs');
+const path = require('path');
+const { REST, Routes } = require('discord.js');
 
-const commands = [
-    new SlashCommandBuilder()
-        .setName('suggest')
-        .setDescription('Suggest a movie for movie night')
-        .addStringOption(option =>
-            option
-                .setName('movie')
-                .setDescription('Movie title')
-                .setRequired(true)
-        ),
+const commands = [];
 
-    new SlashCommandBuilder()
-        .setName('list')
-        .setDescription('Show all movie suggestions'),
+const foldersPath = path.join(__dirname, 'commands');
+const commandFolders = fs.readdirSync(foldersPath);
 
-    new SlashCommandBuilder()
-        .setName('fluteguy')
-        .setDescription('Summon the legendary flute guy 🎶'),
+for (const folder of commandFolders) {
+    const commandsPath = path.join(foldersPath, folder);
+    const commandFiles = fs
+        .readdirSync(commandsPath)
+        .filter(file => file.endsWith('.js'));
 
-    new SlashCommandBuilder()
-        .setName('endvote')
-        .setDescription('End voting and announce the winning movie')
-        .setDefaultMemberPermissions(PermissionsBitField.Flags.Administrator)
+    for (const file of commandFiles) {
+        const command = require(path.join(commandsPath, file));
 
-].map(command => command.toJSON());
+        if (!command.data || !command.execute) {
+            continue; // skip non-command files like state.js
+        }
+
+        commands.push(command.data.toJSON());
+    }
+}
 
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
 
@@ -46,5 +44,3 @@ const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
         console.error(error);
     }
 })();
-
-

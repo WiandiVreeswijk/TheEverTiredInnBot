@@ -80,18 +80,21 @@ client.on('interactionCreate', async interaction => {
         }
     }
 
-    // Button interactions (movie voting)
+    // Button interactions
     if (interaction.isButton()) {
 
-        // ───── STEAM FRIEND BUTTON ─────
-        if (interaction.customId === 'steamfriend_reply') {
-            return interaction.reply({
+        // ───── STEAM FRIEND: COPY FRIEND CODE ─────
+        if (interaction.customId.startsWith('steamfriend_copy_')) {
+            const friendCode = interaction.customId.replace('steamfriend_copy_', '');
+
+            await interaction.deferReply({ ephemeral: true });
+
+            return interaction.editReply({
                 content:
-                    '👋 Want to add them?\n\n' +
-                    'Share **your** Steam Friend Code using:\n' +
-                    '`/steamfriend code:YOUR_CODE`\n\n' +
-                    'Steam → Friends → Add a Friend → Friend Code',
-                ephemeral: true
+                    '📋 **Steam Friend Code**\n\n' +
+                    `\`${friendCode}\`\n\n` +
+                    'Copy this code and paste it here:\n' +
+                    'Steam → Friends → Add a Friend'
             });
         }
 

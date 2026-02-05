@@ -83,21 +83,6 @@ client.on('interactionCreate', async interaction => {
     // Button interactions
     if (interaction.isButton()) {
 
-        // ───── STEAM FRIEND: COPY FRIEND CODE ─────
-        if (interaction.customId.startsWith('steamfriend_copy_')) {
-            const friendCode = interaction.customId.replace('steamfriend_copy_', '');
-
-            await interaction.deferReply({ ephemeral: true });
-
-            return interaction.editReply({
-                content:
-                    '📋 **Steam Friend Code**\n\n' +
-                    `\`${friendCode}\`\n\n` +
-                    'Copy this code and paste it here:\n' +
-                    'Steam → Friends → Add a Friend'
-            });
-        }
-
         // ───── MOVIE VOTING BUTTONS ─────
         if (interaction.customId.startsWith('vote_')) {
             const state = require('./commands/movie/state');

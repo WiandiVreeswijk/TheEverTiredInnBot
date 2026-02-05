@@ -26,7 +26,7 @@ module.exports = {
             .setDescription(
                 `**${interaction.user.username}** wants to connect on Steam!\n\n` +
                 `🧾 **Friend Code:** \`${friendCode}\`\n\n` +
-                'Use the buttons below to add them quickly 👇'
+                'Click the button below to open Steam and add them 👇'
             )
             .setFooter({ text: 'Steam → Friends → Add a Friend' });
 
@@ -34,12 +34,7 @@ module.exports = {
             new ButtonBuilder()
                 .setLabel('➕ Add on Steam')
                 .setStyle(ButtonStyle.Link)
-                .setURL('https://steamcommunity.com/friends/add'),
-
-            new ButtonBuilder()
-                .setCustomId(`steamfriend_copy_${friendCode}`)
-                .setLabel('📋 Copy Friend Code')
-                .setStyle(ButtonStyle.Secondary)
+                .setURL('https://steamcommunity.com/friends/add')
         );
 
         await interaction.reply({
@@ -48,4 +43,3 @@ module.exports = {
         });
     }
 };
-

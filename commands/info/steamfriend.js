@@ -24,18 +24,22 @@ module.exports = {
             .setTitle('🎮 Steam Friend Code')
             .setColor(0x1b2838)
             .setDescription(
-                `**${interaction.user.username}** is looking for Steam friends!\n\n` +
+                `**${interaction.user.username}** wants to connect on Steam!\n\n` +
                 `🧾 **Friend Code:** \`${friendCode}\`\n\n` +
-                '**How to add:**\n' +
-                'Steam → Friends → Add a Friend → Enter a Friend Code'
+                'Use the buttons below to add them quickly 👇'
             )
-            .setFooter({ text: 'Click the button below to respond 👇' });
+            .setFooter({ text: 'Steam → Friends → Add a Friend' });
 
         const row = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
-                .setCustomId('steamfriend_reply')
-                .setLabel('🤝 Add me on Steam')
-                .setStyle(ButtonStyle.Primary)
+                .setLabel('➕ Add on Steam')
+                .setStyle(ButtonStyle.Link)
+                .setURL('https://steamcommunity.com/friends/add'),
+
+            new ButtonBuilder()
+                .setCustomId(`steamfriend_copy_${friendCode}`)
+                .setLabel('📋 Copy Friend Code')
+                .setStyle(ButtonStyle.Secondary)
         );
 
         await interaction.reply({
@@ -44,3 +48,4 @@ module.exports = {
         });
     }
 };
+

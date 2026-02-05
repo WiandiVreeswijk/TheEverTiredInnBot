@@ -82,34 +82,8 @@ client.on('interactionCreate', async interaction => {
 
     // Button interactions (movie voting)
     if (interaction.isButton()) {
-        const state = require('./commands/movie/state');
 
-        const suggestionId = interaction.customId.replace('vote_', '');
-        const suggestion = state.suggestions.find(s => s.id === suggestionId);
-
-        if (!suggestion) {
-            return interaction.reply({
-                content: '❌ This vote is no longer valid.',
-                ephemeral: true
-            });
-        }
-
-        if (suggestion.votes.includes(interaction.user.id)) {
-            return interaction.reply({
-                content: '⚠️ You already voted for this movie!',
-                ephemeral: true
-            });
-        }
-
-        suggestion.votes.push(interaction.user.id);
-
-        const updatedButton = new ButtonBuilder()
-            .setCustomId(`vote_${suggestion.id}`)
-            .setLabel(`Vote 🎬 (${suggestion.votes.length})`)
-            .setStyle(ButtonStyle.Primary);
-
-        const row = new ActionRowBuilder().addComponents(updatedButton);
-
+        // ───── STEAM FRIEND BUTTON ─────
         if (interaction.customId === 'steamfriend_reply') {
             return interaction.reply({
                 content:
@@ -121,7 +95,38 @@ client.on('interactionCreate', async interaction => {
             });
         }
 
-        await interaction.update({ components: [row] });
+        // ───── MOVIE VOTING BUTTONS ─────
+        if (interaction.customId.startsWith('vote_')) {
+            const state = require('./commands/movie/state');
+
+            const suggestionId = interaction.customId.replace('vote_', '');
+            const suggestion = state.suggestions.find(s => s.id === suggestionId);
+
+            if (!suggestion) {
+                return interaction.reply({
+                    content: '❌ This vote is no longer valid.',
+                    ephemeral: true
+                });
+            }
+
+            if (suggestion.votes.includes(interaction.user.id)) {
+                return interaction.reply({
+                    content: '⚠️ You already voted for this movie!',
+                    ephemeral: true
+                });
+            }
+
+            suggestion.votes.push(interaction.user.id);
+
+            const updatedButton = new ButtonBuilder()
+                .setCustomId(`vote_${suggestion.id}`)
+                .setLabel(`Vote 🎬 (${suggestion.votes.length})`)
+                .setStyle(ButtonStyle.Primary);
+
+            const row = new ActionRowBuilder().addComponents(updatedButton);
+
+            return interaction.update({ components: [row] });
+        }
     }
 });
 

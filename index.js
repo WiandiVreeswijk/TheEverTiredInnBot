@@ -33,6 +33,11 @@ if (fs.existsSync(commandsPath)) {
         for (const file of commandFiles) {
             const filePath = path.join(folderPath, file);
             const command = require(filePath);
+
+            if (!command.data || !command.execute) {
+                continue; // skip non-command files like state.js
+            }
+
             client.commands.set(command.data.name, command);
         }
     }

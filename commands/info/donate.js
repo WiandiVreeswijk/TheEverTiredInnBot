@@ -14,8 +14,8 @@ module.exports = {
                 'If you’d like to help cover the monthly costs, any support is deeply appreciated 💖\n\n' +
                 '**Monthly costs:**\n' +
                 '🤖 **Discord bot:** $5 / month\n' +
-                '🌱 **Stardew Valley server:** $18 / month\n' +
-                '⛏️ **Minecraft server:** $14 / month\n\n' +
+                '🌱 **Stardew Valley server:** $24.43 / month\n' +
+                '⛏️ **Minecraft server:** $14.50 / month\n\n' +
                 'Every donation — big or small — helps keep the inn cozy and online.'
             )
             .addFields(

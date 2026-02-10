@@ -1,4 +1,12 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const {
+    SlashCommandBuilder,
+    EmbedBuilder,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle
+} = require('discord.js');
+
+const { getMinecraftStatus } = require('./getStatus');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -6,50 +14,49 @@ module.exports = {
         .setDescription('Show the current status of the Minecraft server'),
 
     async execute(interaction) {
-        try {
-            const res = await fetch(
-                'https://api.mcsrvstat.us/bedrock/2/152.228.198.219:19132'
-            );
-            const data = await res.json();
+        const data = await getMinecraftStatus();
 
-            if (!data.online) {
-                return interaction.reply({
-                    content: '⛔ The Minecraft server is currently offline.',
-                    ephemeral: true
-                });
-            }
+        const embed = buildEmbed(data);
+        const row = buildRow();
 
-            const embed = new EmbedBuilder()
-                .setTitle('⛏️ Minecraft Server Status')
-                .setColor(0x4caf50)
-                .addFields(
-                    {
-                        name: 'Status',
-                        value: '🟢 Online',
-                        inline: true
-                    },
-                    {
-                        name: 'Players',
-                        value: `👥 ${data.players.online} / ${data.players.max}`,
-                        inline: true
-                    },
-                    {
-                        name: 'Server IP',
-                        value: '`152.228.198.219`',
-                        inline: false
-                    }
-                )
-                .setFooter({
-                    text: 'Bedrock Edition'
-                });
-
-            await interaction.reply({ embeds: [embed] });
-        } catch (error) {
-            console.error(error);
-            await interaction.reply({
-                content: '❌ Unable to fetch Minecraft server status.',
-                ephemeral: true
-            });
-        }
+        await interaction.reply({
+            embeds: [embed],
+            components: [row]
+        });
     }
 };
+
+function buildEmbed(data) {
+    if (!data.online) {
+        return new EmbedBuilder()
+            .setTitle('⛏️ Minecraft Server Status')
+            .setColor(0xe57373)
+            .setDescription('🔴 The server is currently offline.');
+    }
+
+    return new EmbedBuilder()
+        .setTitle('⛏️ Minecraft Server Status')
+        .setColor(0x4caf50)
+        .addFields(
+            {
+                name: 'Status',
+                value: '🟢 Online',
+                inline: true
+            },
+            {
+                name: 'Players',
+                value: `👥 ${data.players.online} / ${data.players.max}`,
+                inline: true
+            }
+        )
+        .setFooter({ text: 'Bedrock Edition' });
+}
+
+function buildRow() {
+    return new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+            .setCustomId('minecraft_refresh')
+            .setLabel('🔄 Refresh')
+            .setStyle(ButtonStyle.Secondary)
+    );
+}

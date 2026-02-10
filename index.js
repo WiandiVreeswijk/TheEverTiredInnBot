@@ -83,6 +83,24 @@ client.on('interactionCreate', async interaction => {
     // Button interactions
     if (interaction.isButton()) {
 
+        if (interaction.customId === 'minecraft_refresh') {
+            const { getMinecraftStatus } = require('./commands/minecraft/getStatus');
+            const data = await getMinecraftStatus();
+
+            const embed = buildEmbed(data);
+            const row = new ActionRowBuilder().addComponents(
+                new ButtonBuilder()
+                    .setCustomId('minecraft_refresh')
+                    .setLabel('🔄 Refresh')
+                    .setStyle(ButtonStyle.Secondary)
+            );
+
+            return interaction.update({
+                embeds: [embed],
+                components: [row]
+            });
+        }
+
         // ───── MOVIE VOTING BUTTONS ─────
         if (interaction.customId.startsWith('vote_')) {
             const state = require('./commands/movie/state');

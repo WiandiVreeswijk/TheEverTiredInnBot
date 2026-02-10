@@ -87,7 +87,8 @@ client.on('interactionCreate', async interaction => {
             const { getMinecraftStatus } = require('./commands/minecraft/getStatus');
             const data = await getMinecraftStatus();
 
-            const embed = buildEmbed(data);
+            const { buildMinecraftEmbed } = require('./commands/minecraft/buildEmbed');
+            const embed = buildMinecraftEmbed(data);
             const row = new ActionRowBuilder().addComponents(
                 new ButtonBuilder()
                     .setCustomId('minecraft_refresh')

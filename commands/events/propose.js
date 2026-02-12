@@ -22,6 +22,12 @@ module.exports = {
                 .setName('time')
                 .setDescription('Time (HH:MM)')
                 .setRequired(true)
+        )
+        .addStringOption(option =>
+        option
+            .setName('timezone')
+            .setDescription('Timezone (CEST)')
+            .setRequired(true)
         ),
 
     async execute(interaction) {

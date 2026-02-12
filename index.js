@@ -35,7 +35,7 @@ if (fs.existsSync(commandsPath)) {
             const command = require(filePath);
 
             if (!command.data || !command.execute) {
-                continue; // skip non-command files like state.js
+                continue;
             }
 
             client.commands.set(command.data.name, command);
@@ -64,7 +64,8 @@ client.once('ready', () => {
 // Interaction handling
 // ─────────────────────────────
 client.on('interactionCreate', async interaction => {
-    // Slash commands
+
+    // ───── SLASH COMMANDS ─────
     if (interaction.isChatInputCommand()) {
         const command = client.commands.get(interaction.commandName);
         if (!command) return;
@@ -80,60 +81,101 @@ client.on('interactionCreate', async interaction => {
         }
     }
 
-    // Button interactions
-    if (interaction.isButton()) {
+    // ───── BUTTON INTERACTIONS ─────
+    if (!interaction.isButton()) return;
 
-        if (interaction.customId === 'minecraft_refresh') {
-            const { getMinecraftStatus } = require('./commands/minecraft/getStatus');
-            const data = await getMinecraftStatus();
+    // ───── MINECRAFT REFRESH ─────
+    if (interaction.customId === 'minecraft_refresh') {
+        const { getMinecraftStatus } = require('./commands/minecraft/getStatus');
+        const { buildMinecraftEmbed } = require('./commands/minecraft/buildEmbed');
 
-            const { buildMinecraftEmbed } = require('./commands/minecraft/buildEmbed');
-            const embed = buildMinecraftEmbed(data);
-            const row = new ActionRowBuilder().addComponents(
-                new ButtonBuilder()
-                    .setCustomId('minecraft_refresh')
-                    .setLabel('🔄 Refresh')
-                    .setStyle(ButtonStyle.Secondary)
-            );
+        const data = await getMinecraftStatus();
+        const embed = buildMinecraftEmbed(data);
 
-            return interaction.update({
-                embeds: [embed],
-                components: [row]
+        const row = new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+                .setCustomId('minecraft_refresh')
+                .setLabel('🔄 Refresh')
+                .setStyle(ButtonStyle.Secondary)
+        );
+
+        return interaction.update({
+            embeds: [embed],
+            components: [row]
+        });
+    }
+
+    // ───── EVENT DATE VOTING ─────
+    if (interaction.customId.startsWith('eventvote_')) {
+        const state = require('./commands/events/state');
+
+        if (!state.activeEvent) {
+            return interaction.reply({
+                content: '❌ This event is no longer active.',
+                ephemeral: true
             });
         }
 
-        // ───── MOVIE VOTING BUTTONS ─────
-        if (interaction.customId.startsWith('vote_')) {
-            const state = require('./commands/movie/state');
+        const proposalId = interaction.customId.replace('eventvote_', '');
+        const proposal = state.activeEvent.proposals.find(p => p.id === proposalId);
 
-            const suggestionId = interaction.customId.replace('vote_', '');
-            const suggestion = state.suggestions.find(s => s.id === suggestionId);
-
-            if (!suggestion) {
-                return interaction.reply({
-                    content: '❌ This vote is no longer valid.',
-                    ephemeral: true
-                });
-            }
-
-            if (suggestion.votes.includes(interaction.user.id)) {
-                return interaction.reply({
-                    content: '⚠️ You already voted for this movie!',
-                    ephemeral: true
-                });
-            }
-
-            suggestion.votes.push(interaction.user.id);
-
-            const updatedButton = new ButtonBuilder()
-                .setCustomId(`vote_${suggestion.id}`)
-                .setLabel(`Vote 🎬 (${suggestion.votes.length})`)
-                .setStyle(ButtonStyle.Primary);
-
-            const row = new ActionRowBuilder().addComponents(updatedButton);
-
-            return interaction.update({ components: [row] });
+        if (!proposal) {
+            return interaction.reply({
+                content: '❌ This option no longer exists.',
+                ephemeral: true
+            });
         }
+
+        if (proposal.votes.includes(interaction.user.id)) {
+            return interaction.reply({
+                content: '⚠️ You already voted for this option.',
+                ephemeral: true
+            });
+        }
+
+        proposal.votes.push(interaction.user.id);
+
+        const updatedButton = new ButtonBuilder()
+            .setCustomId(`eventvote_${proposal.id}`)
+            .setLabel(`Vote 🗳️ (${proposal.votes.length})`)
+            .setStyle(ButtonStyle.Primary);
+
+        const row = new ActionRowBuilder().addComponents(updatedButton);
+
+        return interaction.update({ components: [row] });
+    }
+
+    // ───── MOVIE VOTING ─────
+    if (interaction.customId.startsWith('vote_')) {
+        const state = require('./commands/movie/state');
+
+        const suggestionId = interaction.customId.replace('vote_', '');
+        const suggestion = state.suggestions.find(s => s.id === suggestionId);
+
+        if (!suggestion) {
+            return interaction.reply({
+                content: '❌ This vote is no longer valid.',
+                ephemeral: true
+            });
+        }
+
+        if (suggestion.votes.includes(interaction.user.id)) {
+            return interaction.reply({
+                content: '⚠️ You already voted for this movie!',
+                ephemeral: true
+            });
+        }
+
+        suggestion.votes.push(interaction.user.id);
+
+        const updatedButton = new ButtonBuilder()
+            .setCustomId(`vote_${suggestion.id}`)
+            .setLabel(`Vote 🎬 (${suggestion.votes.length})`)
+            .setStyle(ButtonStyle.Primary);
+
+        const row = new ActionRowBuilder().addComponents(updatedButton);
+
+        return interaction.update({ components: [row] });
     }
 });
 

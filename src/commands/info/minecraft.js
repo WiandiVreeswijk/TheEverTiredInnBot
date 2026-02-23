@@ -20,6 +20,7 @@ module.exports = {
                     { name: '🌐 IP', value: '`152.228.198.219`', inline: true },
                     { name: '🔌 Port', value: '`19132`', inline: true }
                 )
+                .setDescription('The server requires an invite before you can join. Please tag @illy in the #🪵minecraft-server or DM him with your username and you will be added to the server playerlist.')
                 .setTimestamp();
 
             const guideEmbed = new EmbedBuilder()

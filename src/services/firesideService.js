@@ -57,7 +57,7 @@ async function checkExpiredSessions(client) {
     const { rows } = await pool.query(`
         SELECT * FROM fireside_sessions
         WHERE status = 'active'
-        AND last_message_at < NOW() - INTERVAL '24 hours'
+        AND last_message_at < NOW() - INTERVAL '72 hours'
     `);
 
     for (const session of rows) {
@@ -200,7 +200,17 @@ async function closeActiveGathering(client) {
 }
 
 async function checkExpiredGatherings(client) {
-    // Not implemented yet
+
+    const { rows } = await pool.query(`
+        SELECT *
+        FROM fireside_gatherings
+        WHERE status = 'active'
+        AND ends_at <= NOW()
+    `)
+
+    for (const gathering of rows) {
+        await closeActiveGathering(client)
+    }
 }
 
 module.exports = {

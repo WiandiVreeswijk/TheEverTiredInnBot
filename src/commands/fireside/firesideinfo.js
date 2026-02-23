@@ -12,9 +12,9 @@ module.exports = {
             .setDescription(
                 "The fireside is a quiet space for 1-on-1 conversations.\n\n" +
                 "**How it works:**\n" +
-                "• A guest uses `/fireside` to light the fire.\n" +
+                "• A resident uses `/fireside` to light the fire.\n" +
                 "• For 90 minutes, others may press **Sit by the Fire**.\n" +
-                "• When the fire closes, guests are paired at random.\n" +
+                "• When the fire closes, residents are paired at random.\n" +
                 "• Each pair receives a private temporary channel.\n\n" +
                 "**Session details:**\n" +
                 "• Sessions last up to **72 hours** of inactivity.\n" +

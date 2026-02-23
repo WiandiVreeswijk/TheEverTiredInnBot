@@ -28,6 +28,15 @@ async function getMovies() {
     return result.rows;
 }
 
+async function movieExists(title) {
+    const result = await pool.query(
+        'SELECT 1 FROM movies WHERE LOWER(title) = LOWER($1)',
+        [title]
+    );
+
+    return result.rows.length > 0;
+}
+
 async function handleVote(interaction) {
     const movieId = interaction.customId.replace('vote_', '');
 
@@ -68,5 +77,6 @@ async function handleVote(interaction) {
 module.exports = {
     createMovie,
     getMovies,
-    handleVote
+    handleVote,
+    movieExists
 };

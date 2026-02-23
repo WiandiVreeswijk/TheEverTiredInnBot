@@ -1,15 +1,21 @@
 const { EmbedBuilder } = require('discord.js');
 
 function buildMinecraftEmbed(data) {
-    if (!data.online) {
-        return new EmbedBuilder()
-            .setTitle('⛏️ Minecraft Server Status')
+    const embed = new EmbedBuilder()
+        .setTitle('⛏️ Minecraft Server Status')
+        .setTimestamp()
+        .setFooter({ text: 'Bedrock Edition • The Ever-Tired Inn' });
+
+    if (!data || !data.online) {
+        return embed
             .setColor(0xe57373)
             .setDescription('🔴 The server is currently offline.');
     }
 
-    return new EmbedBuilder()
-        .setTitle('⛏️ Minecraft Server Status')
+    const online = Number(data?.players?.online) || 0;
+    const max = Number(data?.players?.max) || 0;
+
+    return embed
         .setColor(0x4caf50)
         .addFields(
             {
@@ -19,11 +25,10 @@ function buildMinecraftEmbed(data) {
             },
             {
                 name: 'Players',
-                value: `👥 ${data.players.online} / ${data.players.max}`,
+                value: `👥 ${online} / ${max}`,
                 inline: true
             }
-        )
-        .setFooter({ text: 'Bedrock Edition' });
+        );
 }
 
 module.exports = { buildMinecraftEmbed };

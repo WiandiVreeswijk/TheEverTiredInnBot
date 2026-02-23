@@ -7,6 +7,7 @@ const {
 
 const { getMinecraftStatus } = require('./getStatus');
 const { buildMinecraftEmbed } = require('./buildEmbed');
+const logger = require('../../utils/logger');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -15,9 +16,11 @@ module.exports = {
 
     async execute(interaction) {
         try {
-            const data = await getMinecraftStatus();
+            await interaction.deferReply();
 
+            const data = await getMinecraftStatus();
             const embed = buildMinecraftEmbed(data);
+
             const row = new ActionRowBuilder().addComponents(
                 new ButtonBuilder()
                     .setCustomId('minecraft_refresh')
@@ -25,16 +28,25 @@ module.exports = {
                     .setStyle(ButtonStyle.Secondary)
             );
 
-            await interaction.reply({
+            await interaction.editReply({
                 embeds: [embed],
                 components: [row]
             });
+
         } catch (error) {
-            console.error(error);
-            await interaction.reply({
-                content: '❌ Unable to fetch the Minecraft server status.',
-                ephemeral: true
-            });
+            logger.error(error.stack || error);
+
+            if (!interaction.replied && !interaction.deferred) {
+                await interaction.reply({
+                    content: '❌ Unable to fetch Minecraft server status.',
+                    ephemeral: true
+                });
+            } else {
+                await interaction.editReply({
+                    content: '❌ Unable to fetch Minecraft server status.',
+                    components: []
+                });
+            }
         }
     }
 };

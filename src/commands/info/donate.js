@@ -1,33 +1,42 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const logger = require('../../utils/logger');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('donate')
-        .setDescription('Support The Ever-Tired Inn and help keep our servers running'),
+        .setDescription('Support The Ever-Tired Inn'),
 
     async execute(interaction) {
-        const embed = new EmbedBuilder()
-            .setTitle('💛 Support The Ever-Tired Inn')
-            .setColor(0xf4b942)
-            .setDescription(
-                'The Ever-Tired Inn is kept running by the community.\n' +
-                'If you’d like to help cover the monthly costs, any support is deeply appreciated 💖\n\n' +
-                '**Monthly costs:**\n' +
-                '🤖 **Discord bot:** $5 / month\n' +
-                '🌱 **Stardew Valley server:** $24.43 / month\n' +
-                '⛏️ **Minecraft server:** $14.50 / month\n\n' +
-                'Every donation — big or small — helps keep the inn cozy and online.'
-            )
-            .addFields(
-                {
+        try {
+            const embed = new EmbedBuilder()
+                .setTitle('💛 Support The Ever-Tired Inn')
+                .setColor(0xf4b942)
+                .setDescription(
+                    'The Ever-Tired Inn is community-supported.\n' +
+                    'If you’d like to help cover monthly costs, any support means the world 💖\n\n' +
+                    '**Monthly Costs:**\n' +
+                    '🤖 Discord bot — $5\n' +
+                    '🌱 Stardew server — $24.43\n' +
+                    '⛏️ Minecraft server — $14.50\n\n' +
+                    'Every donation helps keep the inn cozy and online.'
+                )
+                .addFields({
                     name: '☕ Support us on Ko-fi',
                     value: 'https://ko-fi.com/theevertiredinn'
-                }
-            )
-            .setFooter({
-                text: 'Thank you for being part of our little corner of the internet 💫'
-            });
+                })
+                .setFooter({
+                    text: 'Thank you for being part of our little corner 💫'
+                })
+                .setTimestamp();
 
-        await interaction.reply({ embeds: [embed] });
+            await interaction.reply({ embeds: [embed] });
+
+        } catch (error) {
+            logger.error(error.stack || error);
+            await interaction.reply({
+                content: '❌ Failed to load donation information.',
+                ephemeral: true
+            });
+        }
     }
 };

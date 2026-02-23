@@ -76,9 +76,17 @@ async function checkExpiredSessions(client) {
     }
 }
 
-async function createSession(client, parentChannelId, userA, userB) {
+async function createSession(client, parentChannelId, userAId, userBId) {
 
     const guild = client.guilds.cache.first()
+
+    const memberA = await guild.members.fetch(userAId).catch(() => null)
+    const memberB = await guild.members.fetch(userBId).catch(() => null)
+
+    if (!memberA || !memberB) {
+        console.error('Could not fetch one or both members for fireside session.')
+        return
+    }
 
     const channel = await guild.channels.create({
         name: `fireside-${Date.now()}`,
@@ -89,11 +97,11 @@ async function createSession(client, parentChannelId, userA, userB) {
                 deny: [PermissionFlagsBits.ViewChannel]
             },
             {
-                id: userA,
+                id: memberA.id,
                 allow: [PermissionFlagsBits.ViewChannel]
             },
             {
-                id: userB,
+                id: memberB.id,
                 allow: [PermissionFlagsBits.ViewChannel]
             }
         ]
@@ -103,7 +111,7 @@ async function createSession(client, parentChannelId, userA, userB) {
         INSERT INTO fireside_sessions
             (channel_id, user_a, user_b)
         VALUES ($1, $2, $3)
-    `, [channel.id, userA, userB])
+    `, [channel.id, userAId, userBId])
 
     await channel.send(
         "🔥 The fire has paired two guests.\n\nTake your time. This room will close after 24 hours of silence."

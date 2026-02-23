@@ -6,6 +6,7 @@ const {
 } = require('discord.js');
 
 const state = require('./state');
+const { saveMovieData } = require('./storage');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -21,7 +22,7 @@ module.exports = {
     async execute(interaction) {
         if (!state.votingOpen) {
             return interaction.reply({
-                content: '⛔ Voting has ended. No more suggestions allowed.',
+                content: '⛔ Voting has ended.',
                 ephemeral: true
             });
         }
@@ -31,10 +32,12 @@ module.exports = {
         const suggestion = {
             id: Date.now().toString(),
             title: movie,
-            votes: []
+            votes: [],
+            messageId: null
         };
 
         state.suggestions.push(suggestion);
+        saveMovieData(state);
 
         const button = new ButtonBuilder()
             .setCustomId(`vote_${suggestion.id}`)
@@ -50,5 +53,6 @@ module.exports = {
         });
 
         suggestion.messageId = message.id;
+        saveMovieData(state);
     }
 };

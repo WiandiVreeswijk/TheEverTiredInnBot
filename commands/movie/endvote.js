@@ -1,18 +1,11 @@
-const {
-    SlashCommandBuilder,
-    PermissionsBitField,
-    ActionRowBuilder,
-    ButtonBuilder,
-    ButtonStyle
-} = require('discord.js');
-
+const { SlashCommandBuilder } = require('discord.js');
 const state = require('./state');
+const { saveMovieData } = require('./storage');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('endvote')
-        .setDescription('End voting and announce the winning movie')
-        .setDefaultMemberPermissions(PermissionsBitField.Flags.Administrator),
+        .setDescription('End voting and announce the winner'),
 
     async execute(interaction) {
         if (state.suggestions.length === 0) {
@@ -28,39 +21,22 @@ module.exports = {
         const topVotes = sorted[0].votes.length;
         const winners = sorted.filter(s => s.votes.length === topVotes);
 
-        let resultText;
+        let result;
 
         if (topVotes === 0) {
-            resultText = '😅 No one voted. Movie night is cancelled!';
+            result = '😅 No one voted. Movie night cancelled!';
         } else if (winners.length === 1) {
-            resultText =
-                `🏆 **Winner:** 🎬 **${winners[0].title}** ` +
-                `with **${topVotes} votes**!`;
+            result = `🏆 Winner: 🎬 **${winners[0].title}** (${topVotes} votes)`;
         } else {
-            const titles = winners.map(w => `🎬 **${w.title}**`).join(', ');
-            resultText =
-                `🤝 **It’s a tie!** Winners (${topVotes} votes each):\n${titles}`;
+            const tied = winners.map(w => `🎬 **${w.title}**`).join(', ');
+            result = `🤝 It’s a tie (${topVotes} votes each):\n${tied}`;
         }
 
-        for (const s of state.suggestions) {
-            try {
-                const message = await interaction.channel.messages.fetch(s.messageId);
-
-                const disabledRow = new ActionRowBuilder().addComponents(
-                    new ButtonBuilder()
-                        .setCustomId(`vote_${s.id}`)
-                        .setLabel(`Vote 🎬 (${s.votes.length})`)
-                        .setStyle(ButtonStyle.Primary)
-                        .setDisabled(true)
-                );
-
-                await message.edit({ components: [disabledRow] });
-            } catch {}
-        }
-
-        state.suggestions.length = 0;
+        state.suggestions = [];
         state.votingOpen = true;
 
-        await interaction.reply(resultText);
+        saveMovieData(state);
+
+        await interaction.reply(result);
     }
 };

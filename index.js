@@ -148,6 +148,7 @@ client.on('interactionCreate', async interaction => {
     // ───── MOVIE VOTING ─────
     if (interaction.customId.startsWith('vote_')) {
         const state = require('./commands/movie/state');
+        const { saveMovieData } = require('./commands/movie/storage');
 
         const suggestionId = interaction.customId.replace('vote_', '');
         const suggestion = state.suggestions.find(s => s.id === suggestionId);
@@ -161,12 +162,13 @@ client.on('interactionCreate', async interaction => {
 
         if (suggestion.votes.includes(interaction.user.id)) {
             return interaction.reply({
-                content: '⚠️ You already voted for this movie!',
+                content: '⚠️ You already voted!',
                 ephemeral: true
             });
         }
 
         suggestion.votes.push(interaction.user.id);
+        saveMovieData(state);
 
         const updatedButton = new ButtonBuilder()
             .setCustomId(`vote_${suggestion.id}`)

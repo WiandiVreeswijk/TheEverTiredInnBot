@@ -1,12 +1,5 @@
-const suggestions = [];
-let votingOpen = true;
+const { loadMovieData } = require('./storage');
 
-module.exports = {
-    suggestions,
-    get votingOpen() {
-        return votingOpen;
-    },
-    set votingOpen(value) {
-        votingOpen = value;
-    }
-};
+const data = loadMovieData();
+
+module.exports = data;

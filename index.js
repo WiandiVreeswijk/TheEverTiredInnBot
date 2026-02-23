@@ -1,5 +1,5 @@
 require('dotenv').config();
-
+require('./database/init');
 const fs = require('fs');
 const path = require('path');
 const {

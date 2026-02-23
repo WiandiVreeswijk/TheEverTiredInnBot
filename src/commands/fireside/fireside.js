@@ -1,5 +1,5 @@
 ﻿const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js')
-const firesideService = require('../services/firesideService')
+const firesideService = require('../../services/firesideService')
 
 module.exports = {
     data: new SlashCommandBuilder()

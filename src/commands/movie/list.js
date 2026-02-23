@@ -1,19 +1,21 @@
 const { SlashCommandBuilder } = require('discord.js');
-const state = require('./state');
+const movieService = require('../../services/movieService');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('list')
-        .setDescription('Show all movie suggestions'),
+        .setDescription('Show movie suggestions'),
 
     async execute(interaction) {
-        if (state.suggestions.length === 0) {
+        const movies = await movieService.getMovies();
+
+        if (movies.length === 0) {
             return interaction.reply('📭 No movie suggestions yet.');
         }
 
-        const list = state.suggestions
-            .map((s, index) =>
-                `${index + 1}. 🎬 **${s.title}** — ${s.votes.length} vote(s)`
+        const list = movies
+            .map((m, i) =>
+                `${i + 1}. 🎬 **${m.title}** — ${m.votes} vote(s)`
             )
             .join('\n');
 

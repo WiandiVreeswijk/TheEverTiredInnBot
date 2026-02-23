@@ -117,7 +117,7 @@ module.exports = async (client, interaction) => {
             if (interaction.customId === 'fireside_prompt') {
 
                 const pool = require('../database/db')
-                const prompts = require('../fireside/firesidePrompts')
+                const prompts = require('../commands/fireside/firesidePrompts')
 
                 const { rows } = await pool.query(`
                     SELECT *

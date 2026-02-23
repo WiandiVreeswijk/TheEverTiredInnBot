@@ -75,6 +75,14 @@ async function checkExpiredSessions(client) {
     }
 }
 
+async function checkExpiredGatherings(client) {
+    // Not implemented yet
+}
+
+async function checkExpiredSessions(client) {
+    // Not implemented yet
+}
+
 module.exports = {
     getActiveGathering,
     createGathering,

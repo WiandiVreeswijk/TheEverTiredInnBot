@@ -114,6 +114,33 @@ module.exports = async (client, interaction) => {
                 return
             }
 
+            if (interaction.customId === 'fireside_prompt') {
+
+                const pool = require('../database/db')
+                const prompts = require('../utils/firesidePrompts')
+
+                const { rows } = await pool.query(`
+                    SELECT *
+                    FROM fireside_sessions
+                    WHERE channel_id = $1
+                    AND status = 'active'
+                `, [interaction.channel.id])
+
+                if (!rows.length) {
+                    return interaction.reply({
+                        content: "🔥 This is not an active fireside session.",
+                        ephemeral: true
+                    })
+                }
+
+                const randomPrompt =
+                    prompts[Math.floor(Math.random() * prompts.length)]
+
+                await interaction.reply(`🌿 ${randomPrompt}`)
+
+                return
+            }
+
             logger.warn(`Unhandled button: ${interaction.customId}`);
         }
 

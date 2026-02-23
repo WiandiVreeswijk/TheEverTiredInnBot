@@ -1,5 +1,6 @@
 ﻿const pool = require('../database/db')
 const { PermissionFlagsBits, ChannelType } = require('discord.js')
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js')
 
 async function getActiveGathering() {
     const { rows } = await pool.query(`
@@ -113,9 +114,17 @@ async function createSession(client, parentChannelId, userAId, userBId) {
         VALUES ($1, $2, $3)
     `, [channel.id, userAId, userBId])
 
-    await channel.send(
-        "🔥 The fire has paired two guests.\n\nTake your time. This room will close after 24 hours of silence."
-    )
+    const button = new ButtonBuilder()
+        .setCustomId('fireside_prompt')
+        .setLabel('🌿 Ask a Gentle Question')
+        .setStyle(ButtonStyle.Secondary)
+
+    const row = new ActionRowBuilder().addComponents(button)
+
+    await channel.send({
+        content: "🔥 The fire has paired two guests.\n\nTake your time. This room will close after 72 hours of silence.",
+        components: [row]
+    })
 }
 
 async function closeActiveGathering(client) {

@@ -97,10 +97,19 @@ module.exports = async (client, interaction) => {
                     })
                 }
 
-                const count = await firesideService.joinGathering(
+                const result = await firesideService.joinGathering(
                     gathering.id,
                     interaction.user.id
                 )
+
+                if (!result.wasInserted) {
+                    return interaction.reply({
+                        content: "🌿 You are already sitting by the fire.",
+                        ephemeral: true
+                    })
+                }
+
+                const count = result.count
 
                 const { EmbedBuilder } = require('discord.js')
 

@@ -30,11 +30,15 @@ async function createGathering(messageId, channelId, userId, durationMs) {
 }
 
 async function joinGathering(gatheringId, userId) {
-    await pool.query(`
+
+    const result = await pool.query(`
         INSERT INTO fireside_participants (gathering_id, user_id)
         VALUES ($1, $2)
         ON CONFLICT DO NOTHING
+        RETURNING *
     `, [gatheringId, userId])
+
+    const wasInserted = result.rowCount > 0
 
     const { rows } = await pool.query(`
         SELECT COUNT(*)::int AS count
@@ -42,7 +46,10 @@ async function joinGathering(gatheringId, userId) {
         WHERE gathering_id = $1
     `, [gatheringId])
 
-    return rows[0].count
+    return {
+        count: rows[0].count,
+        wasInserted
+    }
 }
 
 async function touchSession(channelId) {

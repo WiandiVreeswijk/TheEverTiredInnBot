@@ -2,6 +2,7 @@
 const path = require('path');
 const logger = require('../utils/logger');
 const movieService = require('../services/movieService');
+const firesideService = require('../services/firesideService')
 
 const commands = new Map();
 
@@ -82,6 +83,31 @@ module.exports = async (client, interaction) => {
             // Movie voting
             if (interaction.customId.startsWith('vote_')) {
                 await movieService.handleVote(interaction);
+                return;
+            }
+
+            if (interaction.customId === 'sit_fire') {
+                if (firesideService.currentGathering().participants.has(interaction.user.id))
+                    return interaction.reply({
+                        content: "🌿 You are already sitting by the fire.",
+                        ephemeral: true
+                    })
+                
+                if (!firesideService.currentGathering())
+                    return interaction.reply({ content: "🔥 The fire has already dimmed.", ephemeral: true })
+
+                if (firesideService.hasActiveFireside(interaction.user.id))
+                    return interaction.reply({ content: "🔥 You are already in a fireside.", ephemeral: true })
+
+                const count = firesideService.joinGathering(interaction.user.id)
+
+                await interaction.update({
+                    embeds: [
+                        interaction.message.embeds[0]
+                            .setDescription(`For the next 90 minutes, guests may sit by the fire.\n\n🌿 Currently sitting: **${count} guests**`)
+                    ]
+                })
+                
                 return;
             }
 

@@ -87,28 +87,31 @@ module.exports = async (client, interaction) => {
             }
 
             if (interaction.customId === 'sit_fire') {
-                if (firesideService.currentGathering().participants.has(interaction.user.id))
+
+                const gathering = await firesideService.getActiveGathering()
+
+                if (!gathering) {
                     return interaction.reply({
-                        content: "🌿 You are already sitting by the fire.",
+                        content: "🔥 The fire has already dimmed.",
                         ephemeral: true
                     })
-                
-                if (!firesideService.currentGathering())
-                    return interaction.reply({ content: "🔥 The fire has already dimmed.", ephemeral: true })
+                }
 
-                if (firesideService.hasActiveFireside(interaction.user.id))
-                    return interaction.reply({ content: "🔥 You are already in a fireside.", ephemeral: true })
+                const count = await firesideService.joinGathering(
+                    gathering.id,
+                    interaction.user.id
+                )
 
-                const count = firesideService.joinGathering(interaction.user.id)
+                const { EmbedBuilder } = require('discord.js')
+
+                const updatedEmbed = EmbedBuilder.from(interaction.message.embeds[0])
+                    .setDescription(`For the next 90 minutes, guests may sit by the fire.\n\n🌿 Currently sitting: **${count} guests**`)
 
                 await interaction.update({
-                    embeds: [
-                        interaction.message.embeds[0]
-                            .setDescription(`For the next 90 minutes, guests may sit by the fire.\n\n🌿 Currently sitting: **${count} guests**`)
-                    ]
+                    embeds: [updatedEmbed]
                 })
-                
-                return;
+
+                return
             }
 
             logger.warn(`Unhandled button: ${interaction.customId}`);

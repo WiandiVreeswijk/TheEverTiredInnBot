@@ -8,16 +8,11 @@ module.exports = {
 
     async execute(interaction) {
 
-        if (firesideService.currentGathering()) {
+        const existing = await firesideService.getActiveGathering()
+
+        if (existing) {
             return interaction.reply({
                 content: "🔥 The fire is already burning.",
-                ephemeral: true
-            })
-        }
-
-        if (firesideService.isOnCooldown(interaction.user.id)) {
-            return interaction.reply({
-                content: "🔥 You must rest before lighting another fire.",
                 ephemeral: true
             })
         }
@@ -39,7 +34,11 @@ module.exports = {
             fetchReply: true
         })
 
-        firesideService.startGathering(message, 90 * 60 * 1000)
-        firesideService.joinGathering(interaction.user.id)
+        await firesideService.createGathering(
+            message.id,
+            message.channel.id,
+            interaction.user.id,
+            90 * 60 * 1000
+        )
     }
 }

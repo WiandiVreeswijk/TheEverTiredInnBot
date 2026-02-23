@@ -48,8 +48,8 @@ async function touchSession(channelId) {
         UPDATE fireside_sessions
         SET last_message_at = NOW()
         WHERE channel_id = $1
-        AND status = 'active'
-    `, [channelId]);
+          AND status = 'active'
+    `, [channelId])
 }
 
 async function checkExpiredSessions(client) {
@@ -73,4 +73,13 @@ async function checkExpiredSessions(client) {
             WHERE id = $1
         `, [session.id]);
     }
+}
+
+module.exports = {
+    getActiveGathering,
+    createGathering,
+    joinGathering,
+    touchSession,
+    checkExpiredGatherings,
+    checkExpiredSessions
 }

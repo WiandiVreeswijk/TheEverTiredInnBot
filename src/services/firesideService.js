@@ -96,8 +96,20 @@ async function createSession(client, parentChannelId, userAId, userBId) {
         return
     }
 
+    const sanitize = (name) =>
+        name
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, '-')   // replace invalid chars
+            .replace(/-+/g, '-')         // collapse multiple dashes
+            .slice(0, 40)                // limit length
+
+    const nameA = sanitize(memberA.user.username)
+    const nameB = sanitize(memberB.user.username)
+
+    const channelName = `fireside-${nameA}-${nameB}`.slice(0, 90)
+
     const channel = await guild.channels.create({
-        name: `fireside-${Date.now()}`,
+        name: channelName,
         type: ChannelType.GuildText,
         permissionOverwrites: [
             {
@@ -129,7 +141,9 @@ async function createSession(client, parentChannelId, userAId, userBId) {
     const row = new ActionRowBuilder().addComponents(button)
 
     await channel.send({
-        content: "🔥 The fire has paired two guests.\n\nTake your time. This room will close after 72 hours of silence.",
+        content:
+            `🔥 <@${memberA.id}> and <@${memberB.id}>, the fire has paired you.\n\n` +
+            `Take your time. This room will close after 72 hours of silence.`,
         components: [row]
     })
 }

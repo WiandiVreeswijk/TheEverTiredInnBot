@@ -11,7 +11,7 @@ const logger = require('../../utils/logger');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('MovieNight_Suggest')
+        .setName('movienightsuggest')
         .setDescription('Suggest a movie')
         .addStringOption(option =>
             option.setName('movie')

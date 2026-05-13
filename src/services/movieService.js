@@ -38,7 +38,7 @@ async function movieExists(title) {
 }
 
 async function handleVote(interaction) {
-    const movieId = interaction.customId.replace('vote_', '');
+    const movieId = interaction.customId.replace('vote_movie_', '');
 
     const existing = await pool.query(
         'SELECT * FROM votes WHERE movie_id = $1 AND user_id = $2',
@@ -65,7 +65,7 @@ async function handleVote(interaction) {
     const voteCount = countResult.rows[0].count;
 
     const updatedButton = new ButtonBuilder()
-        .setCustomId(`vote_${movieId}`)
+        .setCustomId(`vote_movie_${movieId}`)
         .setLabel(`Vote 🎬 (${voteCount})`)
         .setStyle(ButtonStyle.Primary);
 

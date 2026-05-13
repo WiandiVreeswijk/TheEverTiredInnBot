@@ -82,13 +82,13 @@ module.exports = async (client, interaction) => {
         if (interaction.isButton()) {
 
             // Movie voting
-            if (interaction.customId.startsWith('vote_')) {
+            if (interaction.customId.startsWith('vote_movie_')) {
                 await movieService.handleVote(interaction);
                 return;
             }
 
             // Retro game voting
-            if (interaction.customId.startsWith('vote_')) {
+            if (interaction.customId.startsWith('vote_game_')) {
                 await gameService.handleVote(interaction);
                 return;
             }

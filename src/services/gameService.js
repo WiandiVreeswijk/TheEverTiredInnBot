@@ -38,7 +38,7 @@ async function gameExists(title) {
 }
 
 async function handleVote(interaction) {
-    const gameId = interaction.customId.replace('vote_', '');
+    const gameId = interaction.customId.replace('vote_game_', '');
 
     const existing = await pool.query(
         'SELECT * FROM retro_votes WHERE game_id = $1 AND user_id = $2',
@@ -65,7 +65,7 @@ async function handleVote(interaction) {
     const voteCount = countResult.rows[0].count;
 
     const updatedButton = new ButtonBuilder()
-        .setCustomId(`vote_${gameId}`)
+        .setCustomId(`vote_game_${gameId}`)
         .setLabel(`Vote 🕹️ (${voteCount})`)
         .setStyle(ButtonStyle.Primary);
 

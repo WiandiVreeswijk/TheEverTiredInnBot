@@ -2,6 +2,7 @@
 const path = require('path');
 const logger = require('../utils/logger');
 const movieService = require('../services/movieService');
+const gameService = require('../services/gameService');
 const firesideService = require('../services/firesideService')
 
 const commands = new Map();
@@ -83,6 +84,12 @@ module.exports = async (client, interaction) => {
             // Movie voting
             if (interaction.customId.startsWith('vote_')) {
                 await movieService.handleVote(interaction);
+                return;
+            }
+
+            // Retro game voting
+            if (interaction.customId.startsWith('vote_')) {
+                await gameService.handleVote(interaction);
                 return;
             }
 

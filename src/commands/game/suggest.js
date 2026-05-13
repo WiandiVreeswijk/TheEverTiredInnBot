@@ -15,7 +15,7 @@ module.exports = {
         .setDescription('Suggest a game of the month')
         .addStringOption(option =>
             option.setName('game')
-                .setDescription('Retro game title')
+                .setDescription('Ggame title')
                 .setRequired(true)
                 .setMaxLength(100)
         ),
@@ -37,7 +37,7 @@ module.exports = {
 
             if (exists) {
                 return interaction.reply({
-                    content: '⚠️ That retro game has already been suggested.',
+                    content: '⚠️ That game has already been suggested.',
                     ephemeral: true
                 });
             }
@@ -52,11 +52,11 @@ module.exports = {
             const row = new ActionRowBuilder().addComponents(button);
 
             const embed = new EmbedBuilder()
-                .setTitle('🕹️ New Retro Game Suggestion')
+                .setTitle('🕹️ New Game Suggestion')
                 .setDescription(`**${title}**`)
                 .setColor(0x5865F2)
                 .setFooter({
-                    text: `Suggested by ${interaction.user.username} • The Save Point`
+                    text: `Suggested by ${interaction.user.username} • The Checkpoint Café`
                 })
                 .setTimestamp();
 
@@ -70,7 +70,7 @@ module.exports = {
 
             if (!interaction.replied && !interaction.deferred) {
                 await interaction.reply({
-                    content: '❌ Failed to suggest retro game.',
+                    content: '❌ Failed to suggest game.',
                     ephemeral: true
                 });
             }

@@ -5,7 +5,7 @@ const requireRole = require('../../middleware/requireRole');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('gameendvote')
-        .setDescription('End retro game voting and announce the winner'),
+        .setDescription('End game voting and announce the winner'),
 
     async execute(interaction) {
 
@@ -33,7 +33,7 @@ module.exports = {
                 await client.query('ROLLBACK');
 
                 return interaction.reply(
-                    '📭 No retro game suggestions.'
+                    '📭 No game suggestions.'
                 );
             }
 
@@ -56,12 +56,12 @@ module.exports = {
             if (winners.length === 1) {
 
                 message =
-                    `🏆 **Retro Game of the Month**
+                    `🏆 **Game of the Month**
 
 🕹️ **${winners[0].title}**
 with ${topVotes} vote(s)!
 
-Welcome to this month’s Save Point.`;
+Good luck with this month’s Game!`;
 
             } else {
 

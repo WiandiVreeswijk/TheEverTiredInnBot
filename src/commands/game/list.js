@@ -5,7 +5,7 @@ const logger = require('../../utils/logger');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('gamelist')
-        .setDescription('Show retro game suggestions'),
+        .setDescription('Show game suggestions'),
 
     async execute(interaction) {
         try {
@@ -13,7 +13,7 @@ module.exports = {
 
             if (!games || games.length === 0) {
                 return interaction.reply({
-                    content: '📭 No retro game suggestions yet.',
+                    content: '📭 No game suggestions yet.',
                     ephemeral: true
                 });
             }
@@ -27,7 +27,7 @@ module.exports = {
                 .join('\n');
 
             const embed = new EmbedBuilder()
-                .setTitle('🕹️ The Save Point — Retro Game Voting')
+                .setTitle('🕹️ Checkpoint Café — Game Voting')
                 .setDescription(description)
                 .setColor(0x5865F2)
                 .setFooter({
@@ -41,7 +41,7 @@ module.exports = {
 
             if (!interaction.replied && !interaction.deferred) {
                 await interaction.reply({
-                    content: '❌ Failed to fetch retro game suggestions.',
+                    content: '❌ Failed to fetch game suggestions.',
                     ephemeral: true
                 });
             }

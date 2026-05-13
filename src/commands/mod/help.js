@@ -48,7 +48,7 @@ module.exports = {
                 .setFooter({ text: 'You’re not expected to do this alone 💫' })
                 .setTimestamp();
 
-            await interaction.reply({ embeds: [embed], ephemeral: true });
+            await interaction.reply({ embeds: [embed], ephemeral: false });
 
         } catch (error) {
             logger.error(error.stack || error);

@@ -4,7 +4,7 @@ const logger = require('../../utils/logger');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('list')
+        .setName('MovieNight_list')
         .setDescription('Show movie suggestions'),
 
     async execute(interaction) {

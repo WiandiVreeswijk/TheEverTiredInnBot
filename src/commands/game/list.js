@@ -4,7 +4,7 @@ const logger = require('../../utils/logger');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('list')
+        .setName('GameOfTheMonthList')
         .setDescription('Show retro game suggestions'),
 
     async execute(interaction) {

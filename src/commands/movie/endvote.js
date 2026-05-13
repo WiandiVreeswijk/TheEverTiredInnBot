@@ -4,7 +4,7 @@ const requireRole = require('../../middleware/requireRole');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('endvote')
+        .setName('MovieNight_Endvote')
         .setDescription('End voting and announce the winner'),
 
     async execute(interaction) {

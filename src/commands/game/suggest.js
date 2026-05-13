@@ -45,7 +45,7 @@ module.exports = {
             const id = await retroGameService.createGame(title);
 
             const button = new ButtonBuilder()
-                .setCustomId(`vote_${id}`)
+                .setCustomId(`vote_game_${id}`)
                 .setLabel('Vote 🕹️ (0)')
                 .setStyle(ButtonStyle.Primary);
 

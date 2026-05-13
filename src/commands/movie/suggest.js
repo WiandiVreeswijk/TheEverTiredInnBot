@@ -46,7 +46,7 @@ module.exports = {
             const id = await movieService.createMovie(title);
 
             const button = new ButtonBuilder()
-                .setCustomId(`vote_${id}`)
+                .setCustomId(`vote_movie_${id}`)
                 .setLabel('Vote 🎬 (0)')
                 .setStyle(ButtonStyle.Primary);
 

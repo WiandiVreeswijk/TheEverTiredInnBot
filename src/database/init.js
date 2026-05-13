@@ -17,9 +17,24 @@ async function init() {
                 PRIMARY KEY (movie_id, user_id)
             );
         `);
+
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS retro_games (
+                id TEXT PRIMARY KEY,
+                title TEXT NOT NULL
+            );
+        `);
+
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS retro_votes (
+                game_id TEXT REFERENCES retro_games(id) ON DELETE CASCADE,
+                user_id TEXT NOT NULL,
+                PRIMARY KEY (game_id, user_id)
+                );
+        `);
         
         await pool.query(`
-    CREATE TABLE IF NOT EXISTS fireside_gatherings (
+            CREATE TABLE IF NOT EXISTS fireside_gatherings (
         id SERIAL PRIMARY KEY,
         message_id TEXT NOT NULL,
         channel_id TEXT NOT NULL,

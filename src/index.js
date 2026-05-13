@@ -1,3 +1,4 @@
+require('./src/database/init');
 require('dotenv').config();
 
 const validateEnv = require('./config/validateEnv');

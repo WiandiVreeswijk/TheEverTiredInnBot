@@ -4,6 +4,7 @@ const logger = require('../utils/logger');
 const movieService = require('../services/movieService');
 const gameService = require('../services/gameService');
 const firesideService = require('../services/firesideService')
+const predictionService = require('../services/predictionService');
 
 const commands = new Map();
 
@@ -81,6 +82,11 @@ module.exports = async (client, interaction) => {
         // ───── Buttons ─────
         if (interaction.isButton()) {
 
+            if (interaction.customId.startsWith('prediction_')) {
+                await predictionService.handleVote(interaction);
+                return;
+            }
+            
             // Movie voting
             if (interaction.customId.startsWith('vote_movie_')) {
                 await movieService.handleVote(interaction);

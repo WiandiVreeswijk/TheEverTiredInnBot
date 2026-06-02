@@ -80,6 +80,13 @@ async function handleVote(interaction) {
         });
     }
 
+    if (prediction.status === 'closed') {
+        return interaction.reply({
+            content: '🔒 This prediction has been closed.',
+            ephemeral: true
+        });
+    }
+
     await pool.query(`
         INSERT INTO prediction_votes (
             prediction_id,
@@ -133,9 +140,60 @@ async function handleVote(interaction) {
     });
 }
 
+async function closePrediction(predictionId) {
+    await pool.query(`
+        UPDATE predictions
+        SET status = 'closed'
+        WHERE id = $1
+    `, [predictionId]);
+}
+
+async function getVotes(predictionId) {
+    const result = await pool.query(`
+        SELECT
+            user_id,
+            prediction
+        FROM prediction_votes
+        WHERE prediction_id = $1
+        ORDER BY prediction, user_id
+    `, [predictionId]);
+
+    return result.rows;
+}
+
+async function setMessageId(
+    predictionId,
+    messageId
+) {
+    await pool.query(`
+        UPDATE predictions
+        SET message_id = $1
+        WHERE id = $2
+    `, [
+        messageId,
+        predictionId
+    ]);
+}
+
+async function getPredictionByMessageId(
+    messageId
+) {
+    const result = await pool.query(`
+        SELECT *
+        FROM predictions
+        WHERE message_id = $1
+    `, [messageId]);
+
+    return result.rows[0];
+}
+
 module.exports = {
     createPrediction,
     getPrediction,
     getVoteCounts,
-    handleVote
+    handleVote,
+    closePrediction,
+    getVotes,
+    getPredictionByMessageId,
+    setMessageId
 };

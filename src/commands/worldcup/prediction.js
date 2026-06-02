@@ -80,9 +80,15 @@ module.exports = {
             })
             .setTimestamp();
 
-        await interaction.reply({
+        const response = await interaction.reply({
             embeds: [embed],
-            components: [row]
+            components: [row],
+            fetchReply: true
         });
+
+        await predictionService.setMessageId(
+            predictionId,
+            response.id
+        );
     }
 };

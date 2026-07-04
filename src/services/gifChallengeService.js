@@ -1,0 +1,44 @@
+const cron = require("node-cron");
+const { EmbedBuilder } = require("discord.js");
+const topics = require("../utils/gifTopics");
+
+const CHANNEL_ID = "1523049089951072417";
+
+function randomTopic() {
+    return topics[Math.floor(Math.random() * topics.length)];
+}
+
+function startGifChallenge(client) {
+
+    cron.schedule("* * * * *", async () => {
+
+        const channel = await client.channels.fetch(CHANNEL_ID);
+
+        if (!channel) return;
+
+        const challenge = randomTopic();
+
+        const embed = new EmbedBuilder()
+            .setTitle("🎬 Daily GIF Challenge")
+            .setColor(0xA855F7)
+            .addFields(
+                { name: "Category", value: challenge.category },
+                { name: "Today's Topic", value: `**${challenge.topic}**` }
+            )
+            .setDescription(
+                "Reply with the GIF that matches today's topic!\n\nThe community can vote using ❤️ 😂 ⭐."
+            );
+
+        const message = await channel.send({
+            embeds: [embed]
+        });
+
+        await message.react("❤️");
+        await message.react("😂");
+        await message.react("⭐");
+    });
+
+    console.log("GIF Challenge scheduler started.");
+}
+
+module.exports = { startGifChallenge };

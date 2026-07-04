@@ -8,6 +8,7 @@ const interactionHandler = require('./handlers/interactionHandler');
 const pool = require('./database/db');
 const logger = require('./utils/logger');
 const firesideService = require('./services/firesideService');
+const { startGifChallenge } = require('./services/gifChallengeService');
 
 const client = new Client({
     intents: [
@@ -36,15 +37,19 @@ const client = new Client({
 client.once('clientReady', () => {
     logger.info(`Logged in as ${client.user.tag}`);
 
+    // Start the GIF Challenge scheduler
+    startGifChallenge(client);
+
+    // Fireside background tasks
     setInterval(async () => {
         try {
-            await firesideService.checkExpiredGatherings(client)
-            await firesideService.checkExpiredSessions(client)
+            await firesideService.checkExpiredGatherings(client);
+            await firesideService.checkExpiredSessions(client);
         } catch (err) {
-            logger.error('Fireside background job failed')
-            logger.error(err.stack || err)
+            logger.error('Fireside background job failed');
+            logger.error(err.stack || err);
         }
-    }, 60 * 1000)
+    }, 60 * 1000);
 });
 
 // ─────────────────────────────

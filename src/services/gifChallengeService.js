@@ -21,12 +21,8 @@ function startGifChallenge(client) {
         const embed = new EmbedBuilder()
             .setTitle("🎬 Daily GIF Challenge")
             .setColor(0xA855F7)
-            .addFields(
-                { name: "Category", value: challenge.category },
-                { name: "Today's Topic", value: `**${challenge.topic}**` }
-            )
             .setDescription(
-                "Reply with the GIF that matches today's topic!\n\nThe community can vote using ❤️ 😂 ⭐."
+                `# **${challenge}**\n\nReply with the GIF that matches today's topic!\n\nThe community can vote using ❤️ 😂 ⭐.`
             );
 
         const message = await channel.send({

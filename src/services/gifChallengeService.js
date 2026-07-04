@@ -10,7 +10,7 @@ function randomTopic() {
 
 function startGifChallenge(client) {
 
-    cron.schedule("* * * * *", async () => {
+    cron.schedule("30 22 * * *", async () => {
 
         const channel = await client.channels.fetch(CHANNEL_ID);
 
@@ -32,6 +32,8 @@ function startGifChallenge(client) {
         await message.react("❤️");
         await message.react("😂");
         await message.react("⭐");
+    }, {
+        timezone : "Europe/Amsterdam"
     });
 
     console.log("GIF Challenge scheduler started.");
